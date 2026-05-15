@@ -302,10 +302,13 @@ class SimplexAdapter(BasePlatformAdapter):
             return
 
         if resp_type == "newChatItem":
-            await self._handle_new_chat_item(event)
+            # Unwrap from resp envelope — daemon nests chatItem inside resp
+            payload = event.get("resp", event)
+            await self._handle_new_chat_item(payload)
         elif resp_type == "newChatItems":
             # Batch variant — process each item
-            items = event.get("chatItems") or []
+            payload = event.get("resp", event)
+            items = payload.get("chatItems") or []
             for item_wrapper in items:
                 await self._handle_new_chat_item(item_wrapper)
         # Ignore all other event types (delivery receipts, contact updates, etc.)
