@@ -380,6 +380,7 @@ class SimplexAdapter(BasePlatformAdapter):
                     )
 
                     self._last_seen_item[contact_id] = item_id
+                    self._contact_names[str(contact_id)] = display_name
                     logger.info(
                         "SimpleX poll: new msg from contact %s (item %d): %.60s",
                         display_name, item_id, text,
@@ -751,7 +752,7 @@ async def _standalone_send(
             group_id = chat_id[6:]
             cmd_str = f"#[{group_id}] {message}"
         else:
-            cmd_str = f"@[{chat_id}] {message}"
+            cmd_str = f"@{chat_id} {message}"
 
         payload = {
             "corrId": f"hermes-snd-{int(time.time() * 1000)}",
